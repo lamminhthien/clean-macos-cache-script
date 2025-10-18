@@ -1,146 +1,156 @@
-# macOS Cache Cleanup Tool
+# 🧹 macOS Cache Cleaner
 
-An interactive terminal tool for cleaning various cache locations on macOS with a beautiful, colorful UI.
+An interactive terminal tool to clean cache directories and free up disk space on macOS.
 
 ## Features
 
-- **Interactive checkbox interface** with keyboard navigation
-- **Colorful terminal UI** for better user experience
-- **Dynamic folder size calculation** for each cache location
-- **Smart detection**:
-  - Automatically detects all Chrome profiles (Default, Profile 1, Profile 2, etc.)
-  - Detects multiple cache types per Chrome profile (Cache, Code Cache, GPUCache, WebStorage, Service Worker)
-  - Detects installed VSCode variants (checks for actual app installation)
-- **Permission handling**:
-  - Checks for sudo privileges at startup
-  - Warns about caches that require elevated permissions
-  - Option to continue without sudo (with warnings)
-- **Safety warnings** for critical folders (e.g., .gradle, system temp files)
-- **Universal paths** using `~` instead of hardcoded user paths
-- **Comprehensive cache coverage**:
-  - Package managers (Yarn, npm, pnpm, Homebrew, CocoaPods)
-  - Browsers (All Chrome cache types for all profiles)
-  - IDEs (VSCode variants with multiple cache types, Xcode DerivedData & UserData)
-  - Applications (Teams v1 & v2, Krisp, Warp, Google Updater)
-  - System caches (User cache, CoreSimulator, Logs, Temp files)
-  - Development caches (Gradle, general cache)
+- 🎨 **Colorful Interactive UI** - Beautiful terminal interface with colors, icons, and progress bars
+- 📊 **Size Calculation** - Shows exact size of each cache category before cleaning
+- ☑️  **Interactive Selection** - Choose which caches to clean with checkboxes
+- 🔐 **Sudo Handling** - Automatically requests elevated permissions when needed
+- ⚠️  **Smart Warnings** - Alerts you about important caches (e.g., Gradle cache affects build times)
+- 🌐 **Multi-Profile Support** - Detects and cleans all Chrome profiles automatically
+- 📦 **Comprehensive Coverage** - Cleans caches from popular development tools and applications
+
+## What Gets Cleaned
+
+### Development Tools
+- 🧶 Yarn Cache
+- 📦 NPM Cache
+- 📦 PNPM Store
+- 📦 CocoaPods Cache
+- 🍺 Homebrew Downloads
+- 🐘 Gradle Cache (with warning)
+- 🔨 Xcode DerivedData & UserData
+- 📱 iOS Simulator Cache
+
+### Applications
+- 🌐 Chrome Cache (all profiles)
+- 💻 VSCode & VSCode Insiders Cache
+- 🎤 Krisp Cache
+- ⚡ Warp Terminal Cache
+- 📞 Microsoft Teams Cache
+- 🔄 Google Updater
+
+### System
+- 📁 User Cache Directory (~/.cache)
+- 🗑️  System Temp Files (requires sudo)
+- 📝 System Logs (requires sudo)
+- 🎬 Media Analysis Cache
 
 ## Installation
 
-1. Clone or download this repository
-2. Make the script executable:
-   ```bash
-   chmod +x clean-cache.sh
-   ```
+### Prerequisites
+
+- Node.js >= 14.0.0
+- macOS
+
+### Install Dependencies
+
+```bash
+npm install
+```
 
 ## Usage
 
-Run the script:
+### Run the tool
+
 ```bash
-./clean-cache.sh
+npm start
 ```
 
-For more efficient cleaning (recommended for system caches):
+Or if you've installed it globally:
+
 ```bash
-sudo ./clean-cache.sh
+clean-cache
 ```
 
-**Note:** Some cache locations require sudo privileges to delete effectively. The script will warn you if you're not running with sudo and give you the option to continue anyway.
+### How to Use
 
-### Navigation
+1. **Scan** - The tool automatically scans all cache directories
+2. **Review** - See a table showing cache sizes for each category
+3. **Select** - Use arrow keys to navigate, Space to select/deselect caches
+4. **Confirm** - Review warnings and confirm before cleaning
+5. **Clean** - Watch as the tool cleans selected caches with progress indicators
 
-- **↑/↓** or **j/k** - Navigate up/down through the list
-- **SPACE** - Toggle selection (check/uncheck)
-- **ENTER** - Confirm selection and proceed to cleanup
-- **q** - Quit without cleaning
+### Keyboard Controls
 
-### Workflow
+- `↑/↓` - Navigate through options
+- `Space` - Select/deselect item
+- `a` - Toggle all items
+- `Enter` - Confirm selection
 
-1. The tool scans all cache locations and displays their sizes
-2. Use keyboard navigation to select which caches you want to clean
-3. Press ENTER to confirm your selection
-4. Confirm the cleanup action (y/N)
-5. The tool will delete selected caches and show results
+## Example Output
 
-## Cache Locations Cleaned
+```
+╔════════════════════════════════════════╗
+║                                        ║
+║        🧹 macOS Cache Cleaner          ║
+║   Clean up cache and free disk space   ║
+║                                        ║
+╚════════════════════════════════════════╝
 
-### Package Managers
-- `~/Library/Caches/Yarn`
-- `~/.npm`
-- `~/Library/pnpm`
-- `~/Library/Caches/Homebrew`
-- `~/Library/Caches/CocoaPods`
+✔ Scan completed!
 
-### Browsers
-- Chrome (all profiles, dynamically detected):
-  - Cache & Code Cache (both in Application Support and Library/Caches)
-  - GPUCache
-  - WebStorage
-  - Service Worker
+┌────────────────────────────────────┬─────────────┬──────────────────┐
+│ Category                           │ Size        │ Status           │
+├────────────────────────────────────┼─────────────┼──────────────────┤
+│ 🌐 Chrome Cache                    │ 1.23 GB     │ Ready            │
+│ 🔨 Xcode Cache                     │ 856.42 MB   │ Ready            │
+│ 💻 VSCode Cache                    │ 234.56 MB   │ Ready            │
+│ 🧶 Yarn Cache                      │ 156.78 MB   │ Ready            │
+└────────────────────────────────────┴─────────────┴──────────────────┘
 
-### IDEs
-- VSCode variants (Code, Code Insiders, Cursor, Windsurf):
-  - Cache, CachedData, Code Cache, GPUCache
-- Xcode:
-  - DerivedData
-  - UserData
+╭───────────────────────────────╮
+│                               │
+│  Total Cache Size: 2.45 GB    │
+│                               │
+╰───────────────────────────────╯
+```
 
-### Applications
-- Microsoft Teams (v1 & v2):
-  - Cache folders
-  - Service Worker, WebStorage
-  - Logs
-- Krisp:
-  - Cache, Code Cache, GPUCache
-  - Update files
-  - Logs
-- Warp:
-  - Main cache
-  - Autoupdate files
-- Google Updater
+## Warnings
 
-### System & Development
-- User Library Caches
-- Media Analysis Cache
-- CoreSimulator Caches (requires sudo)
-- System Logs (requires sudo)
-- Temp files in /private/var/tmp (requires sudo, with warning)
-- Gradle caches (with warning)
-- General ~/.cache
+### Important Notes
 
-## Safety Features
+- **Gradle Cache**: Cleaning this requires re-installing modules for mobile projects. First build after cleaning will be slower.
+- **System Directories**: Some directories require sudo privileges. You'll be prompted when needed.
+- **Backup**: While safe, consider backing up important data before cleaning system directories.
 
-- **Sudo privilege check** - Detects if running without sudo and warns about potential issues
-- **Non-destructive scanning** - The tool only reads sizes until you confirm cleanup
-- **Warnings for critical folders** - Special warnings for:
-  - `.gradle` - May require re-downloading dependencies
-  - `/private/var/tmp` - May contain important temporary files
-  - System folders requiring sudo permissions
-- **Smart IDE detection** - Only shows cache for actually installed applications
-- **Confirmation prompt** - Double confirmation before any deletion
-- **Permission handling** - Gracefully handles permission denied errors
-- **Skip missing folders** - Automatically skips folders that don't exist
+## Development
 
-## Requirements
+### Project Structure
 
-- macOS (Darwin)
-- Bash (included with macOS)
-- No external dependencies required
+```
+.
+├── index.js           # Main CLI tool
+├── package.json       # Project configuration
+├── instruction.md     # Original requirements
+└── README.md         # This file
+```
 
-## Notes
+### Dependencies
 
-- The script uses `rm -rf` for deletion, so be careful with your selections
-- **Running with sudo is recommended** for complete cache cleanup, especially for:
-  - CoreSimulator caches
-  - System logs
-  - Temporary system files
-- Cache sizes are calculated using `du -sh` which may take a moment for large directories
-- The tool will skip any cache locations that don't exist on your system
-- Chrome caches are cleaned from both:
-  - `~/Library/Application Support/Google/Chrome/` (WebStorage, Service Worker, etc.)
-  - `~/Library/Caches/Google/Chrome/` (System caches)
-- IDE detection checks if apps are installed in `/Applications` or `~/Applications` before showing cache options
+- `chalk` - Terminal colors
+- `inquirer` - Interactive prompts
+- `ora` - Spinners and progress indicators
+- `cli-table3` - Beautiful tables
+- `boxen` - Bordered boxes
 
 ## License
 
-MIT License - Feel free to use and modify as needed.
+MIT
+
+## Contributing
+
+Issues and pull requests are welcome!
+
+## Safety
+
+This tool:
+- ✅ Only cleans cache and temporary files
+- ✅ Shows warnings before cleaning important caches
+- ✅ Requires confirmation before any deletion
+- ✅ Uses safe deletion methods
+- ✅ Handles permissions properly
+
+**Note**: This tool is designed for macOS only and will not run on other operating systems.

@@ -1,5 +1,8 @@
+### Can use NodeJS for create good terminal tool
+
 ### This is a raw note for research command, tool will be create as terminal interactive tool.
 ## You can decorate tool with color full, many icon, loading progress or logo colorful
+## If clean cache some folder need sudo permission, please require root permission
 
 ## For create tool, we can show up folder size of each section, and list down as check box for user can select all, or select specifc to excute clean up
 
@@ -23,7 +26,7 @@
 /Users/thienlam/Library/Application Support/Google/Chrome/Default/WebStorage
 /Users/thienlam/Library/Application Support/Google/Chrome/Default/Service Worker
 
-# Need add command line for clean not only Code Insider but also normal visual code, Cursor, Windsurf
+# Need add command line for clean not only Code Insider but also normal visual code
 /Users/thienlam/Library/Application Support/Google/GoogleUpdater
 /Users/thienlam/Library/Application Support/Code - Insiders/Cache
 /Users/thienlam/Library/Application Support/Code - Insiders/WebStorage

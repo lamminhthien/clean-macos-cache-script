@@ -1,0 +1,32 @@
+{
+  "name": "macos-cache-cleaner",
+  "version": "1.0.0",
+  "description": "Interactive terminal tool to clean macOS cache directories",
+  "main": "index.js",
+  "bin": {
+    "clean-cache": "./index.js"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "test": "node test.js"
+  },
+  "keywords": [
+    "macos",
+    "cache",
+    "cleaner",
+    "terminal",
+    "cli"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "inquirer": "^8.2.5",
+    "ora": "^5.4.1",
+    "cli-table3": "^0.6.3",
+    "boxen": "^5.1.2"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
