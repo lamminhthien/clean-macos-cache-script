@@ -9,7 +9,7 @@
   "scripts": {
     "start": "node index.js",
     "test": "node test.js",
-    "build": "pkg . --targets node18-macos-x64 --output dist/macos-cache-cleaner"
+    "build": "npx pkg . --targets node18-macos-x64 --output dist/macos-cache-cleaner"
   },
   "keywords": [
     "macos",
@@ -21,11 +21,11 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "boxen": "^5.1.2",
     "chalk": "^4.1.2",
-    "inquirer": "^8.2.5",
-    "ora": "^5.4.1",
     "cli-table3": "^0.6.3",
-    "boxen": "^5.1.2"
+    "inquirer": "^8.2.5",
+    "ora": "^5.4.1"
   },
   "engines": {
     "node": ">=14.0.0"
@@ -35,5 +35,8 @@
       "node18-macos-x64"
     ],
     "outputPath": "dist"
+  },
+  "devDependencies": {
+    "pkg": "^5.8.1"
   }
 }

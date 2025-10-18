@@ -8,7 +8,7 @@ echo "🔨 Building macOS Cache Cleaner Application..."
 echo "📦 Cleaning previous build..."
 rm -rf dist
 
-# Build executable with pkg
+# Build executable with npx pkg
 echo "🏗️  Building executable..."
 npm run build
 
