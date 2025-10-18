@@ -1,4 +1,7 @@
-### This is a raw note for research command
+### This is a raw note for research command, tool will be create as terminal interactive tool.
+## You can decorate tool with color full, many icon, loading progress or logo colorful
+
+## For create tool, we can show up folder size of each section, and list down as check box for user can select all, or select specifc to excute clean up
 
 ## Please change /Users/thienlam to ~ for use in any MacOS machine
 
@@ -44,3 +47,18 @@
 /Users/thienlam/Library/Group Containers/UBF8T346G9.com.microsoft.teams/Library/Application Support/Logs
 /Users/thienlam/Library/Developer/Xcode/DerivedData
 /Users/thienlam/Library/Developer/Xcode/UserData
+
+# Let add warning that clean this folder, we will need re-install module of mobile project for regenerating cache (without this cache, first time build app is very slow)
+/Users/thienlam/.gradle
+
+/Users/thienlam/.cache
+
+/private/var/tmp
+
+/Library/Developer/CoreSimulator/Caches
+
+/Library/Logs
+
+brew cleanup
+npm cache clean --force
+pnpm store prune
