@@ -21,3 +21,6 @@ pnpm-lock.yaml
 
 # Test files
 test-output/
+
+# Build Output
+dist
