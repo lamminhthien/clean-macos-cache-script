@@ -52,10 +52,16 @@ const CACHE_CATEGORIES = {
     name: '💻 VSCode Cache',
     paths: [
       '~/Library/Application Support/Code/Cache',
+      '~/Library/Application Support/Code/Code Cache',
+      '~/Library/Application Support/Code/GPUCache',
       '~/Library/Application Support/Code/WebStorage',
+      '~/Library/Application Support/Code/Service Worker',
       '~/Library/Application Support/Code/CachedData',
       '~/Library/Application Support/Code - Insiders/Cache',
+      '~/Library/Application Support/Code - Insiders/Code Cache',
+      '~/Library/Application Support/Code - Insiders/GPUCache',
       '~/Library/Application Support/Code - Insiders/WebStorage',
+      '~/Library/Application Support/Code - Insiders/Service Worker',
       '~/Library/Application Support/Code - Insiders/CachedData'
     ],
     requiresSudo: false,
@@ -64,10 +70,12 @@ const CACHE_CATEGORIES = {
   krisp: {
     name: '🎤 Krisp Cache',
     paths: [
-      '~/Library/Application Support/krisp/update',
-      '~/Library/Application Support/krisp/Code Cache',
       '~/Library/Application Support/krisp/Cache',
+      '~/Library/Application Support/krisp/Code Cache',
       '~/Library/Application Support/krisp/GPUCache',
+      '~/Library/Application Support/krisp/WebStorage',
+      '~/Library/Application Support/krisp/Service Worker',
+      '~/Library/Application Support/krisp/update',
       '~/Library/Application Support/krisp/logs'
     ],
     requiresSudo: false,
@@ -75,7 +83,12 @@ const CACHE_CATEGORIES = {
   },
   warp: {
     name: '⚡ Warp Terminal Cache',
-    paths: ['~/Library/Application Support/dev.warp.Warp-Stable/autoupdate'],
+    paths: [
+      '~/Library/Application Support/dev.warp.Warp-Stable/Cache',
+      '~/Library/Application Support/dev.warp.Warp-Stable/Code Cache',
+      '~/Library/Application Support/dev.warp.Warp-Stable/GPUCache',
+      '~/Library/Application Support/dev.warp.Warp-Stable/autoupdate'
+    ],
     requiresSudo: false,
     warning: null
   },
@@ -152,12 +165,105 @@ const CACHE_CATEGORIES = {
   }
 };
 
+// Common Electron cache subdirectories
+const ELECTRON_CACHE_DIRS = [
+  'Cache',
+  'Code Cache',
+  'GPUCache',
+  'WebStorage',
+  'Service Worker',
+  'IndexedDB',
+  'blob_storage',
+  'Session Storage',
+  'databases',
+  'Local Storage'
+];
+
 // Utility function to expand home directory
 function expandPath(filePath) {
   if (filePath.startsWith('~/')) {
     return path.join(os.homedir(), filePath.slice(2));
   }
   return filePath;
+}
+
+// Check if a directory is an Electron app by looking for Electron cache patterns
+function isElectronApp(appPath) {
+  try {
+    if (!fs.existsSync(appPath) || !fs.statSync(appPath).isDirectory()) {
+      return false;
+    }
+
+    // Check for at least one common Electron cache directory
+    const hasElectronCache = ELECTRON_CACHE_DIRS.some(cacheDir => {
+      const cachePath = path.join(appPath, cacheDir);
+      return fs.existsSync(cachePath);
+    });
+
+    return hasElectronCache;
+  } catch (err) {
+    return false;
+  }
+}
+
+// Get all Electron cache paths for a given app directory
+function getElectronCachePaths(appPath) {
+  const cachePaths = [];
+
+  for (const cacheDir of ELECTRON_CACHE_DIRS) {
+    const cachePath = path.join(appPath, cacheDir);
+    if (fs.existsSync(cachePath)) {
+      cachePaths.push(cachePath);
+    }
+  }
+
+  return cachePaths;
+}
+
+// Auto-discover Electron apps in Application Support
+function discoverElectronApps() {
+  const appSupportPath = path.join(os.homedir(), 'Library/Application Support');
+  const electronApps = {};
+
+  try {
+    if (!fs.existsSync(appSupportPath)) {
+      return electronApps;
+    }
+
+    const entries = fs.readdirSync(appSupportPath, { withFileTypes: true });
+
+    for (const entry of entries) {
+      if (entry.isDirectory()) {
+        const appPath = path.join(appSupportPath, entry.name);
+
+        // Skip apps that are already explicitly defined in CACHE_CATEGORIES
+        const alreadyDefined = Object.values(CACHE_CATEGORIES).some(category =>
+          category.paths.some(p => expandPath(p).includes(entry.name))
+        );
+
+        if (!alreadyDefined && isElectronApp(appPath)) {
+          const cachePaths = getElectronCachePaths(appPath);
+
+          if (cachePaths.length > 0) {
+            // Create a sanitized key from the app name
+            const key = entry.name.toLowerCase().replace(/[^a-z0-9]/g, '');
+
+            electronApps[key] = {
+              name: `⚡ ${entry.name}`,
+              paths: cachePaths,
+              requiresSudo: false,
+              warning: null,
+              isAutoDiscovered: true
+            };
+          }
+        }
+      }
+    }
+  } catch (err) {
+    // Silently fail if we can't read the directory
+  }
+
+  return electronApps;
 }
 
 // Get all matching paths for glob patterns
@@ -182,10 +288,10 @@ function getMatchingPaths(pattern) {
         if (basePattern.includes('*')) {
           const regex = new RegExp('^' + basePattern.replace(/\*/g, '.*') + '$');
           if (regex.test(entry.name)) {
-            // For Chrome profiles, find Cache and Code Cache subdirectories
+            // For Chrome profiles, find all Electron cache subdirectories
             if (entry.isDirectory() && expandedPattern.includes('Google/Chrome')) {
-              const subDirs = ['Cache', 'Code Cache', 'WebStorage', 'Service Worker'];
-              for (const subDir of subDirs) {
+              const chromeCacheDirs = ['Cache', 'Code Cache', 'GPUCache', 'WebStorage', 'Service Worker'];
+              for (const subDir of chromeCacheDirs) {
                 const subPath = path.join(fullPath, subDir);
                 if (fs.existsSync(subPath)) {
                   matches.push(subPath);
@@ -245,18 +351,39 @@ async function scanCaches() {
   const spinner = ora('Scanning cache directories...').start();
   const results = [];
 
-  for (const [key, category] of Object.entries(CACHE_CATEGORIES)) {
+  // Discover Electron apps automatically
+  spinner.text = 'Discovering Electron apps...';
+  const discoveredElectronApps = discoverElectronApps();
+
+  // Merge discovered apps with predefined categories
+  const allCategories = { ...CACHE_CATEGORIES, ...discoveredElectronApps };
+
+  spinner.text = 'Scanning cache directories...';
+
+  for (const [key, category] of Object.entries(allCategories)) {
     let totalSize = 0;
     const foundPaths = [];
 
-    for (const pathPattern of category.paths) {
-      const matchingPaths = getMatchingPaths(pathPattern);
-
-      for (const matchedPath of matchingPaths) {
-        const size = getDirectorySize(matchedPath);
+    // For auto-discovered apps, paths are already resolved
+    if (category.isAutoDiscovered) {
+      for (const dirPath of category.paths) {
+        const size = getDirectorySize(dirPath);
         if (size > 0) {
           totalSize += size;
-          foundPaths.push(matchedPath);
+          foundPaths.push(dirPath);
+        }
+      }
+    } else {
+      // Original logic for predefined categories
+      for (const pathPattern of category.paths) {
+        const matchingPaths = getMatchingPaths(pathPattern);
+
+        for (const matchedPath of matchingPaths) {
+          const size = getDirectorySize(matchedPath);
+          if (size > 0) {
+            totalSize += size;
+            foundPaths.push(matchedPath);
+          }
         }
       }
     }
@@ -269,7 +396,8 @@ async function scanCaches() {
         paths: foundPaths,
         requiresSudo: category.requiresSudo,
         warning: category.warning,
-        command: category.command
+        command: category.command,
+        isAutoDiscovered: category.isAutoDiscovered || false
       });
     }
   }
