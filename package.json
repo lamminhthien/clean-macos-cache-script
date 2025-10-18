@@ -9,7 +9,7 @@
   "scripts": {
     "start": "node index.js",
     "test": "node test.js",
-    "build": "npx pkg . --targets node18-macos-x64 --output dist/macos-cache-cleaner"
+    "build": "./build-app.sh"
   },
   "keywords": [
     "macos",

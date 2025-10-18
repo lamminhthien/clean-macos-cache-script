@@ -10,7 +10,7 @@ rm -rf dist
 
 # Build executable with npx pkg
 echo "🏗️  Building executable..."
-npm run build
+npx pkg . --targets node18-macos-x64 --output dist/macos-cache-cleaner
 
 # Create app bundle structure
 echo "📁 Creating app bundle structure..."
