@@ -2,13 +2,15 @@ import { execSync } from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
 import { expandPath } from './path';
+import { ELECTRON_CACHE_DIRS } from '../constants/electron';
 
 /**
  * Gets all matching paths for glob patterns
  * @param pattern - File path pattern (supports * wildcard and ~)
+ * @param isChromeProfile - Whether this is a Chrome profile that needs cache subdirectory scanning
  * @returns Array of matching absolute paths
  */
-export function getMatchingPaths(pattern: string): string[] {
+export function getMatchingPaths(pattern: string, isChromeProfile: boolean = false): string[] {
   const expandedPattern = expandPath(pattern);
 
   // Check if pattern contains wildcards
@@ -30,9 +32,8 @@ export function getMatchingPaths(pattern: string): string[] {
           const regex = new RegExp('^' + basePattern.replace(/\*/g, '.*') + '$');
           if (regex.test(entry.name)) {
             // For Chrome profiles, find all Electron cache subdirectories
-            if (entry.isDirectory() && expandedPattern.includes('Google/Chrome')) {
-              const chromeCacheDirs = ['Cache', 'Code Cache', 'GPUCache', 'WebStorage', 'Service Worker'];
-              for (const subDir of chromeCacheDirs) {
+            if (entry.isDirectory() && isChromeProfile) {
+              for (const subDir of ELECTRON_CACHE_DIRS) {
                 const subPath = path.join(fullPath, subDir);
                 if (fs.existsSync(subPath)) {
                   matches.push(subPath);
@@ -49,6 +50,18 @@ export function getMatchingPaths(pattern: string): string[] {
     } catch (err) {
       return [];
     }
+  }
+
+  // For Chrome profiles without wildcards, still scan for cache subdirectories
+  if (isChromeProfile && fs.existsSync(expandedPattern) && fs.statSync(expandedPattern).isDirectory()) {
+    const matches: string[] = [];
+    for (const subDir of ELECTRON_CACHE_DIRS) {
+      const subPath = path.join(expandedPattern, subDir);
+      if (fs.existsSync(subPath)) {
+        matches.push(subPath);
+      }
+    }
+    return matches;
   }
 
   return [expandedPattern];

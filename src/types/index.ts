@@ -14,6 +14,8 @@ export interface CacheCategory {
   command?: string;
   /** Whether this category was auto-discovered */
   isAutoDiscovered?: boolean;
+  /** Whether this is a Chrome profile that needs special cache subdirectory scanning */
+  isChromeProfile?: boolean;
 }
 
 /**

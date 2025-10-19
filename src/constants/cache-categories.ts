@@ -13,13 +13,14 @@ export const CACHE_CATEGORIES: CacheCategories = {
   chrome: {
     name: '🌐 Chrome Cache',
     paths: [
-      '~/Library/Caches/Google/Chrome/*/Cache',
-      '~/Library/Caches/Google/Chrome/*/Code Cache',
-      '~/Library/Application Support/Google/Chrome/*/WebStorage',
-      '~/Library/Application Support/Google/Chrome/*/Service Worker'
+      '~/Library/Application Support/Google/Chrome/Default',
+      '~/Library/Application Support/Google/Chrome/Profile *',
+      '~/Library/Application Support/Google/Chrome/Guest Profile',
+      '~/Library/Application Support/Google/Chrome/System Profile'
     ],
     requiresSudo: false,
-    warning: null
+    warning: null,
+    isChromeProfile: true
   },
   googleUpdater: {
     name: '🔄 Google Updater',

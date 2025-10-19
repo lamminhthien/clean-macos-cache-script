@@ -37,7 +37,7 @@ export async function scanCaches(): Promise<CacheResult[]> {
     } else {
       // Original logic for predefined categories
       for (const pathPattern of category.paths) {
-        const matchingPaths = getMatchingPaths(pathPattern);
+        const matchingPaths = getMatchingPaths(pathPattern, category.isChromeProfile);
 
         for (const matchedPath of matchingPaths) {
           const size = getDirectorySize(matchedPath);

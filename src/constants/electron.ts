@@ -11,5 +11,15 @@ export const ELECTRON_CACHE_DIRS: ReadonlyArray<string> = [
   'blob_storage',
   'Session Storage',
   'databases',
-  'Local Storage'
+  'Local Storage',
+  'File System',
+  'Network Action Predictor',
+  'Extensions',
+  'DawnWebGPUCache',
+  'DawnGraphiteCache',
+  'Favicons',
+  'History',
+  'Sessions',
+  'Storage',
+  'Reporting and NEL'
 ] as const;
