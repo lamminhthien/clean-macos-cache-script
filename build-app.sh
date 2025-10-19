@@ -29,6 +29,14 @@ echo "📋 Copying executable..."
 cp dist/macos-cache-cleaner "dist/macOS Cache Cleaner.app/Contents/MacOS/macos-cache-cleaner-bin"
 chmod +x "dist/macOS Cache Cleaner.app/Contents/MacOS/macos-cache-cleaner-bin"
 
+# Copy app icon
+if [ -f "AppIcon.icns" ]; then
+  echo "🎨 Adding app icon..."
+  cp AppIcon.icns "dist/macOS Cache Cleaner.app/Contents/Resources/AppIcon.icns"
+else
+  echo "⚠️  Warning: AppIcon.icns not found, app will use default icon"
+fi
+
 # Create launcher script
 echo "🚀 Creating launcher script..."
 cat > "dist/macOS Cache Cleaner.app/Contents/MacOS/macos-cache-cleaner" << 'EOF'

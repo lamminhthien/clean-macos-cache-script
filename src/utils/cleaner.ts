@@ -38,8 +38,6 @@ export async function cleanCaches(caches: CacheResult[], selectedKeys: string[])
       let cleaned = false;
       for (const dirPath of cache.paths) {
         if (fs.existsSync(dirPath)) {
-          const sizeBeforeClean = cache.size;
-
           if (cache.requiresSudo) {
             try {
               execSync(`sudo rm -rf "${dirPath}"`, { stdio: 'ignore' });
@@ -60,14 +58,11 @@ export async function cleanCaches(caches: CacheResult[], selectedKeys: string[])
               break;
             }
           }
-
-          if (cleaned) {
-            totalCleaned += sizeBeforeClean;
-          }
         }
       }
 
       if (cleaned) {
+        totalCleaned += cache.size;
         spinner.succeed(chalk.green(`✓ ${cache.name} - ${formatBytes(cache.size)} cleaned`));
         successCount++;
       } else if (failCount === 0) {
