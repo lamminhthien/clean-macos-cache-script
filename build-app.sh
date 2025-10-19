@@ -4,9 +4,16 @@ set -e
 
 echo "🔨 Building macOS Cache Cleaner Application..."
 
-# Clean previous build
-echo "📦 Cleaning previous build..."
-rm -rf dist
+# Clean previous build artifacts (but keep TypeScript output)
+echo "📦 Cleaning previous build artifacts..."
+rm -rf "dist/macOS Cache Cleaner.app"
+rm -f dist/macos-cache-cleaner
+
+# Ensure TypeScript is compiled
+if [ ! -f "dist/index.js" ]; then
+  echo "📝 Compiling TypeScript..."
+  npm run build:ts
+fi
 
 # Build executable with npx pkg
 echo "🏗️  Building executable..."

@@ -24,3 +24,8 @@ test-output/
 
 # Build Output
 dist
+*.tsbuildinfo
+
+# TypeScript
+*.js.map
+*.d.ts.map

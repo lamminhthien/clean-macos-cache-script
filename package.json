@@ -2,14 +2,20 @@
   "name": "macos-cache-cleaner",
   "version": "1.0.0",
   "description": "Interactive terminal tool to clean macOS cache directories",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "bin": {
-    "clean-cache": "./index.js"
+    "clean-cache": "./dist/index.js"
   },
   "scripts": {
-    "start": "node index.js",
-    "test": "node test.js",
-    "build": "./build-app.sh"
+    "start": "node dist/index.js",
+    "dev": "ts-node src/index.ts",
+    "build:ts": "tsc",
+    "build:pkg": "./build-app.sh",
+    "build": "npm run build:ts && npm run build:pkg",
+    "clean": "rm -rf dist",
+    "clean:app": "rm -rf dist/macos-cache-cleaner dist/'macOS Cache Cleaner.app'",
+    "test": "node test.js"
   },
   "keywords": [
     "macos",
@@ -37,6 +43,10 @@
     "outputPath": "dist"
   },
   "devDependencies": {
-    "pkg": "^5.8.1"
+    "@types/inquirer": "^9.0.9",
+    "@types/node": "^24.8.1",
+    "pkg": "^5.8.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
   }
 }
